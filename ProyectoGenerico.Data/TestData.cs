@@ -17,7 +17,7 @@ namespace ProyectoGenerico.Data
         {
         }
 
-        public Entities.TestAdd Add(Entities.ViewModel.TestAdd testEntity)
+        public TestEntity Add(TestAdd testEntity)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace ProyectoGenerico.Data
                 listParameters.Add(new SqlParameter("@Nombre", testEntity.Nombre));
                 listParameters.Add(new SqlParameter("@Apellido", testEntity.Apellido));
 
-                return context.ExecuteStoredProcedure<TestAdd>("Test_Nombre_Add", listParameters.ToArray()).FirstOrDefault();
+                return context.ExecuteStoredProcedure<TestEntity>("Test_Nombre_Add", listParameters.ToArray()).FirstOrDefault();
             }
             catch (Exception ex)
             {

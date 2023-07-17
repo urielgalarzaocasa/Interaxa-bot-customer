@@ -179,6 +179,10 @@
       <Project>{aa45dd4c-5d65-41e8-bc7e-f16aa9282e80}</Project>
       <Name>ProyectoGenerico.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ProyectoGenerico.Helper\ProyectoGenerico.Helper.csproj">
+      <Project>{6295fb75-3d43-47fc-8ab6-a6a4e190259f}</Project>
+      <Name>ProyectoGenerico.Helper</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
