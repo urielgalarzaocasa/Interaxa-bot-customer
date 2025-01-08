@@ -1,0 +1,104 @@
+{
+  "Cabecera": {
+    "NroSeguimiento": "ECO0058857614",
+    "Remitente": "5941 - FAMILY CARS",
+    "Destinatario": "VIAMO",
+    "Domicilio_Destino": "OTTO KRAUSE 4760, AREA DE PROMOCIÓN EL TRIÁNGULO, BUENOS AIRES, ARGENTINA - 1667 - AREA DE PROMOCIÓN EL TRIÁNGULO - ARGENTINA",
+    "Domicilio_GPS_Destino": "OTTO KRAUSE 4760, AREA DE PROMOCIÓN EL TRIÁNGULO, BUENOS AIRES, ARGENTINA , AREA DE PROMOCIÓN EL TRIÁNGULO , BUENOS AIRES, ARGENTINA",
+    "Domicilio_Gps_Origen": "PARDO 2357, BELLA VISTA, PROVINCIA DE BU , BELLA VISTA , BUENOS AIRES, ARGENTINA",
+    "Patente": "",
+    "Estado": "HFD",
+    "Motivo": "Z4",
+    "Ayuda": false,
+    "Solicitante": "102003095",
+    "TipoTracking": "ZS01",
+    "PasoActualLineaTiempo": 0,
+    "CantidadPasosLineaTiempo": 4,
+    "EstadoDescripcion": "Finalizado",
+    "EstadoFecha": "18/09/2023 14:10:34",
+    "DomicilioDestinoLatitud": "0.0",
+    "DomicilioDestinoLongitud": "0.0",
+
+    "CentroStock": "A001",
+    "Ap": "40036465",
+    "ApPos": "000010",
+    "CodigoPostalOrigen": "0.0",
+    "CodigoPostalDestino": "0.0"
+  },
+    "Detalle": [
+        {
+            "fecha_hora": "01/09/2023 11:44:31",
+            "Descripcion": "Hubo un inconveniente en el retiro del envío. Por favor comunicate al 0810-888-6227 para recibir las indicaciones de los pasos a seguir.",
+            "Descripcion_Corta": "Hubo un inconveniente en el retiro del envío. Por favor comunicate al 0810-888-6227 para recibir las indicaciones de los pasos a seguir.",
+            "Estado": "PUP",
+            "Motivo": "Y1"
+        },
+        {
+            "fecha_hora": "09/05/2023 13:25:30",
+            "Descripcion": "Hubo un inconveniente en el retiro del envío. Por favor comunicate al 0810-888-6227 para recibir las indicaciones de los pasos a seguir.",
+            "Descripcion_Corta": "Hubo un inconveniente en el retiro del envío. Por favor comunicate al 0810-888-6227 para recibir las indicaciones de los pasos a seguir.",
+            "Estado": "PUP",
+            "Motivo": "Y1"
+        },
+        {
+            "fecha_hora": "05/05/2023 14:26:25",
+            "Descripcion": "Hubo un inconveniente en el retiro del envío. Por favor comunicate al 0810-888-6227 para recibir las indicaciones de los pasos a seguir.",
+            "Descripcion_Corta": "Hubo un inconveniente en el retiro del envío. Por favor comunicate al 0810-888-6227 para recibir las indicaciones de los pasos a seguir.",
+            "Estado": "PRO",
+            "Motivo": "Y8"
+        },
+        {
+            "fecha_hora": "05/05/2023 11:28:26",
+            "Descripcion": "Pasamos por el domicilio de destino y no te encontramos.",
+            "Descripcion_Corta": "Pasamos por el domicilio de destino y no te encontramos.",
+            "Estado": "PUP",
+            "Motivo": "05"
+        },
+        {
+            "fecha_hora": "04/05/2023 14:51:46",
+            "Descripcion": "Hubo un inconveniente en el retiro del envío. Por favor comunicate al 0810-888-6227 para recibir las indicaciones de los pasos a seguir.",
+            "Descripcion_Corta": "Hubo un inconveniente en el retiro del envío. Por favor comunicate al 0810-888-6227 para recibir las indicaciones de los pasos a seguir.",
+            "Estado": "PRO",
+            "Motivo": "Y8"
+        },
+        {
+            "fecha_hora": "04/05/2023 12:17:32",
+            "Descripcion": "Pasamos por el domicilio de destino y no te encontramos.",
+            "Descripcion_Corta": "Pasamos por el domicilio de destino y no te encontramos.",
+            "Estado": "PUP",
+            "Motivo": "05"
+        },
+        {
+            "fecha_hora": "03/05/2023 17:58:23",
+            "Descripcion": "Hubo un inconveniente en el retiro del envío. Por favor comunicate al 0810-888-6227 para recibir las indicaciones de los pasos a seguir.",
+            "Descripcion_Corta": "Hubo un inconveniente en el retiro del envío. Por favor comunicate al 0810-888-6227 para recibir las indicaciones de los pasos a seguir.",
+            "Estado": "PRO",
+            "Motivo": "Y8"
+        },
+        {
+            "fecha_hora": "01/05/2023 10:00:00",
+            "Descripcion": "El envío ya está confirmado para que lo retiremos por el domicilio del remitente.",
+            "Descripcion_Corta": "El envío ya está confirmado para que lo retiremos por el domicilio del remitente.",
+            "Estado": "PUS",
+            "Motivo": ""
+        }
+    ],
+    "LineaTiempo": [
+        {
+            "Paso": "1",
+            "Fecha_Hora": "01/05/2023 10:00:00",
+            "Tipo_Tracking": "New",
+            "Descripcion": "",
+            "Estado": "PUS",
+            "Motivo": ""
+        },
+        {
+            "Paso": "6",
+            "Fecha_Hora": "10/05/2023 14:10:34",
+            "Tipo_Tracking": "New",
+            "Descripcion": "",
+            "Estado": "END",
+            "Motivo": "Y1"
+        }
+    ]
+}

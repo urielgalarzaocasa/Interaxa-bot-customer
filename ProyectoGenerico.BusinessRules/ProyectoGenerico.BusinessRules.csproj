@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ProyectoGenerico.BusinessRules</RootNamespace>
     <AssemblyName>ProyectoGenerico.BusinessRules</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BotMessageBusinessRules.cs" />
+    <Compile Include="TrackingMeliBusinessRules.cs" />
+    <Compile Include="TrackingPostalDNIBusinessRules.cs" />
     <Compile Include="TestBusinessRules.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +65,9 @@
       <Project>{812debcd-7601-47c4-9b20-7cfac1a31598}</Project>
       <Name>ProyectoGenerico.Services</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
