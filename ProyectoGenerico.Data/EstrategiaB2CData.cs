@@ -18,7 +18,7 @@ namespace ProyectoGenerico.Data
         {
         }
 
-        public EstrategiaB2C Get(EstrategiaB2C estrategia)
+        public EstrategiaB2CResponse Get(EstrategiaB2C estrategia)
         {
             LogHelper.GetInstance().PrintDebug("EstrategiaB2C Get() inicio");
             try
@@ -34,7 +34,7 @@ namespace ProyectoGenerico.Data
 	            listParameters.Add(new SqlParameter("@destino"                      , estrategia.Destino ));
                 listParameters.Add(new SqlParameter("@visitas"                      , estrategia.Visitas ));
 
-                var response = context.ExecuteStoredProcedure<EstrategiaB2C>("BotTrackingSeleccionarEstrategia_ug", listParameters.ToArray()).FirstOrDefault();
+                var response = context.ExecuteStoredProcedure<EstrategiaB2CResponse>("BotTrackingSeleccionarEstrategia_ug", listParameters.ToArray()).FirstOrDefault();
                
                 return response;
             }

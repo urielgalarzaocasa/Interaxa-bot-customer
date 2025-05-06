@@ -24,7 +24,8 @@ namespace ProyectoGenerico.BusinessRules
 
         public BotMessageResponse GetMessage()
         {
-            if (Tracking.Cabecera == null) return Response(true, true, "Derivar a un asesor");
+            if (Tracking.Cabecera == null) 
+                return Response(true, true, "Derivar a un asesor");
             
             try
             {
@@ -52,8 +53,8 @@ namespace ProyectoGenerico.BusinessRules
                 DebugLog(estrategiaQuery);
 
                 EstrategiaB2CData   estrategiaB2CData   = new EstrategiaB2CData();
-               
-                EstrategiaB2C       estrategiaResponse  = estrategiaB2CData.Get(estrategiaQuery);
+                
+                EstrategiaB2CResponse       estrategiaResponse  = estrategiaB2CData.Get(estrategiaQuery);
 
                 ValidarRespuesta(estrategiaResponse);
 
@@ -94,7 +95,7 @@ namespace ProyectoGenerico.BusinessRules
             }
         }
 
-        private void ValidarRespuesta(EstrategiaB2C estrategiaResponse)
+        private void ValidarRespuesta(EstrategiaB2CResponse estrategiaResponse)
         {
             if (estrategiaResponse == null) throw new Exception("La consulta no devolvió resultados.");
             
