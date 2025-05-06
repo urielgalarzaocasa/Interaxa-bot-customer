@@ -58,11 +58,9 @@ namespace ProyectoGenerico.BusinessRules
 
                 ValidarRespuesta(estrategiaResponse);
 
-                bool existeDemora   = ExisteDemora(estrategiaResponse.UltimaFechaDeActualizacionEnSap);
-                
-                string message      = existeDemora is false ? estrategiaResponse.RespuestaSinDemora : estrategiaResponse.RespuestaConDemora;
-                
-                bool derivaAsesor   = existeDemora;
+                string message = estrategiaResponse.Texto;
+
+                bool derivaAsesor = ExisteDemora(estrategiaResponse.HoraHabilesFin);
 
                 message = ReplaceMessageDynamicValues(message);
 
@@ -72,9 +70,9 @@ namespace ProyectoGenerico.BusinessRules
 
                     cliente = estrategiaResponse.Cliente,
 
-                    servicio = estrategiaResponse.Servicio,
+                    servicio = estrategiaQuery.Servicio,
 
-                    estadoDeEnvio = estrategiaResponse.EstadoDeEnvio,
+                    estadoDeEnvio = estrategiaQuery.EstadoDeEnvio,
 
                     derivaAsesor = derivaAsesor,
 
@@ -99,11 +97,7 @@ namespace ProyectoGenerico.BusinessRules
         {
             if (estrategiaResponse == null) throw new Exception("La consulta no devolvió resultados.");
             
-            if (estrategiaResponse.UltimaFechaDeActualizacionEnSap == null) { throw new Exception("La consulta no devolvió el campo Fecha de Ultima Actualización."); }
-            
-            if (estrategiaResponse.RespuestaConDemora == null) { throw new Exception("La consulta no devolvió el campo Respuesta Con Demora."); }
-            
-            if (estrategiaResponse.RespuestaSinDemora == null) { throw new Exception("La consulta no devolvió el campo Respuesta Sin Demora."); }
+            if (estrategiaResponse.Fecha == null) { throw new Exception("La consulta no devolvió el campo Fecha de Ultima Actualización."); }
         }
 
         private void DebugLog(EstrategiaB2C estrategiaQuery)
@@ -113,13 +107,13 @@ namespace ProyectoGenerico.BusinessRules
 
         private string ReplaceMessageDynamicValues(string message)
         {
-            DateTime fechaParseada = ParseFecha(Tracking.Cabecera.EstadoFecha);
+            //DateTime fechaParseada = ParseFecha(Tracking.Cabecera.EstadoFecha);
             
-            string string1 = message.Replace("(fecha)", fechaParseada.ToString());
+            //string string1 = message.Replace("(fecha)", fechaParseada.ToString());
             
-            string string2 = string1.Replace("(nombre)", Tracking.Cabecera.Receptor);
+            //string string2 = string1.Replace("(nombre)", Tracking.Cabecera.Receptor);
 
-            message = string2;
+            //message = string2;
 
             return message;
         }
@@ -229,10 +223,10 @@ namespace ProyectoGenerico.BusinessRules
             foreach (var detalle in Tracking.Detalle)
             {
                 if (detalle.Estado == "HFD" && detalle.Descripcion.ToLower().Trim().Contains(ultimamilla.ToLower().Trim())) 
-                    return "ULTIMAMILLA";
+                    return "ULTIMA MILLA";
             }
 
-            return "PREULTIMAMILLA";
+            return "PRE ULTIMA MILLA";
         }
 
         private DateTime GetUltimaFechaDelDetalle()
