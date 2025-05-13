@@ -17,7 +17,7 @@ namespace ProyectoGenerico.BusinessRules
         private string Seguimiento { get; set; }
         public BotMessageBusinessRules(string seguimiento) 
         {
-            this.Tracking   = TrackingService.GetTracking(seguimiento);
+            this.Tracking = TrackingService.GetTracking(seguimiento);
             
             this.Seguimiento = seguimiento;
         }
@@ -30,6 +30,8 @@ namespace ProyectoGenerico.BusinessRules
             try
             {
                 LogHelper.GetInstance().PrintDebug("-- BotMessageBusinessRules inicio --");
+
+                bool Influencer = Tracking.Cabecera.Influencer;
 
                 EstrategiaB2C estrategiaQuery = new EstrategiaB2C
                 {
@@ -52,9 +54,9 @@ namespace ProyectoGenerico.BusinessRules
 
                 DebugLog(estrategiaQuery);
 
-                EstrategiaB2CData   estrategiaB2CData   = new EstrategiaB2CData();
+                EstrategiaB2CData estrategiaB2CData = new EstrategiaB2CData();
                 
-                EstrategiaB2CResponse       estrategiaResponse  = estrategiaB2CData.Get(estrategiaQuery);
+                EstrategiaB2CResponse estrategiaResponse = estrategiaB2CData.Get(estrategiaQuery);
 
                 ValidarRespuesta(estrategiaResponse);
 
@@ -62,7 +64,7 @@ namespace ProyectoGenerico.BusinessRules
 
                 bool derivaAsesor = ExisteDemora(estrategiaResponse.HoraHabilesFin);
 
-                message = ReplaceMessageDynamicValues(message);
+                message = ReplaceMessageDynamicValues(derivaAsesor, estrategiaResponse.Cliente, message);
 
                 BotMessageResponse botMessageResponse = new BotMessageResponse
                 {
@@ -76,7 +78,9 @@ namespace ProyectoGenerico.BusinessRules
 
                     derivaAsesor = derivaAsesor,
 
-                    error = false
+                    error = false,
+
+                    influencer = Influencer
                 };
 
                 return botMessageResponse;
@@ -87,7 +91,8 @@ namespace ProyectoGenerico.BusinessRules
                 { 
                     LogHelper.GetInstance().PrintError("BotMessageBusinessRules: " + this.Tracking.Cabecera.NroSeguimiento + ex.Message); 
                 }
-                if (!this.Tracking.Detalle[0].Descripcion.IsNullOrEmpty() ) return Response(false, false, this.Tracking.Detalle[0].Descripcion);
+                if (!this.Tracking.Detalle[0].Descripcion.IsNullOrEmpty() ) 
+                    return Response(false, false, this.Tracking.Detalle[0].Descripcion);
 
                 return Response(true, true, "Derivar a un asesor");
             }
@@ -105,17 +110,12 @@ namespace ProyectoGenerico.BusinessRules
             LogHelper.GetInstance().PrintDebug($"Seguimiento: {this.Seguimiento}, Solicitante: {estrategiaQuery.Solicitante}, AP: {estrategiaQuery.Ap}, Servicio: {estrategiaQuery.Servicio}, EstadoDeEnvio: {estrategiaQuery.EstadoDeEnvio}, MotivoPOD: {estrategiaQuery.MotivoPOD}, CentroStock: {estrategiaQuery.CentroStock}, Destino: {estrategiaQuery.Destino}, Visitas: {estrategiaQuery.Visitas}");
         }
 
-        private string ReplaceMessageDynamicValues(string message)
+        private string ReplaceMessageDynamicValues(bool derivaAsesor, string clienteCustomer, string message)
         {
-            //DateTime fechaParseada = ParseFecha(Tracking.Cabecera.EstadoFecha);
-            
-            //string string1 = message.Replace("(fecha)", fechaParseada.ToString());
-            
-            //string string2 = string1.Replace("(nombre)", Tracking.Cabecera.Receptor);
-
-            //message = string2;
-
-            return message;
+            string messageResponse = message;
+            if(!derivaAsesor)
+                messageResponse = message.Replace("[REMITENTE]", clienteCustomer);
+            return messageResponse;
         }
 
         private DateTime ParseFecha(string myDate)

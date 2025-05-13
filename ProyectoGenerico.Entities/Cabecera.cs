@@ -30,6 +30,7 @@ namespace ProyectoGenerico.Entities
         public int PasoActual { get; set; } //0
         public int CantidadPasos { get; set; } //0
         public string Receptor { get; set; } //Luis
+        public bool Influencer { get; set; } //false
 
     }
 }

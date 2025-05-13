@@ -10,5 +10,6 @@ namespace ProyectoGenerico.Entities
         public string cliente { get; set; }
         public string servicio { get; set; }
         public string estadoDeEnvio { get; set; }
+        public bool influencer { get; set; }
     }
 }
