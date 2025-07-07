@@ -9,7 +9,7 @@ namespace ProyectoGenerico.API.Controllers
 {
     public class BotMessageController : ApiController
     {
-        public BotMessageResponse Get(string seguimiento)
+        public BotMessageResponse Get(string seguimiento, string tipo)
         {
             BotMessageResponse botMessageResponse = new BotMessageResponse();
             try

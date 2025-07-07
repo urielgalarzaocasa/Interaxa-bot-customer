@@ -13,11 +13,9 @@ namespace ProyectoGenerico.Data
     public class EstrategiaB2CData
     {
         private readonly IProyectoGenericoContext context = new ProyectoGenericoContext();
-
         public EstrategiaB2CData()
         {
         }
-
         public EstrategiaB2CResponse Get(EstrategiaB2C estrategia)
         {
             LogHelper.GetInstance().PrintDebug("EstrategiaB2C Get() inicio");
@@ -34,7 +32,7 @@ namespace ProyectoGenerico.Data
 	            listParameters.Add(new SqlParameter("@destino"                      , estrategia.Destino ));
                 listParameters.Add(new SqlParameter("@visitas"                      , estrategia.Visitas ));
 
-                var response = context.ExecuteStoredProcedure<EstrategiaB2CResponse>("BotTrackingSeleccionarEstrategia_ug", listParameters.ToArray()).FirstOrDefault();
+                var response = context.ExecuteStoredProcedure<EstrategiaB2CResponse>(GetStoredProcedure(), listParameters.ToArray()).FirstOrDefault();
                
                 return response;
             }
@@ -43,6 +41,10 @@ namespace ProyectoGenerico.Data
                 LogHelper.GetInstance().PrintError("No se pudo obtener la estrategia: " + ex.Message);
                 throw ex;
             }
+        }
+        private string GetStoredProcedure()
+        {
+            return ConfigurationHelper.GetValue("appSettings", "StoredProcedure"); //BotTrackingSeleccionarEstrategia_ug BotTrackingSeleccionarEstrategia_ug_qa
         }
     }
 }

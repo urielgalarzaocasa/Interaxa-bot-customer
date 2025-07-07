@@ -1,8 +1,10 @@
 ﻿using ProyectoGenerico.BusinessRules;
 using ProyectoGenerico.Entities;
 using System;
+using System.Net.Http;
 using System.Web.Http;
 using ProyectoGenerico.Helper;
+using System.Collections.Generic;
 
 namespace ProyectoGenerico.API.Controllers
 {
@@ -12,6 +14,8 @@ namespace ProyectoGenerico.API.Controllers
         {
             try
             {
+                if(Request.Headers.Authorization.IsNull())
+                    return new PostalDNIResponse(false, true, message:());
                 LogHelper.GetInstance().PrintDebug("Api inicio: ");
 
                 TrackingPostalDNIBusinessRules trackingPostalDNIBusinessRules = new TrackingPostalDNIBusinessRules();

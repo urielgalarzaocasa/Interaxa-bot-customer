@@ -15,11 +15,12 @@ namespace ProyectoGenerico.BusinessRules
     {
         private Tracking Tracking { get; set; }
         private string Seguimiento { get; set; }
-        public BotMessageBusinessRules(string seguimiento) 
+        private string Tipo {  get; set; }
+        public BotMessageBusinessRules(string seguimiento,string tipo) 
         {
-            this.Tracking = TrackingService.GetTracking(seguimiento);
-            
+            this.Tracking = TrackingService.GetTracking(seguimiento, tipo);
             this.Seguimiento = seguimiento;
+            this.Tipo = tipo;
         }
 
         public BotMessageResponse GetMessage()
@@ -36,50 +37,34 @@ namespace ProyectoGenerico.BusinessRules
                 EstrategiaB2C estrategiaQuery = new EstrategiaB2C
                 {
                     Solicitante = this.GetSolicitante(),
-
                     Servicio = this.GetServicio(),
-
                     EstadoDeEnvio = this.GetEstadoDeEnvio(),
-
                     MotivoPOD = this.GetMotivoPOD(),
-
                     CentroStock = this.GetCentroStock(),
-
                     Destino = this.GetDestino(),
-
                     Visitas = this.GetVisitas(),
-
                     Ap = this.GetAP()
                 };
 
                 DebugLog(estrategiaQuery);
 
                 EstrategiaB2CData estrategiaB2CData = new EstrategiaB2CData();
-                
                 EstrategiaB2CResponse estrategiaResponse = estrategiaB2CData.Get(estrategiaQuery);
 
                 ValidarRespuesta(estrategiaResponse);
 
                 string message = estrategiaResponse.Texto;
-
                 bool derivaAsesor = ExisteDemora(estrategiaResponse.HoraHabilesFin);
-
-                message = ReplaceMessageDynamicValues(derivaAsesor, estrategiaResponse.Cliente, message);
+                message = ReplaceMessageDynamicValues(derivaAsesor, estrategiaResponse.NombreCliente, message);
 
                 BotMessageResponse botMessageResponse = new BotMessageResponse
                 {
                     message = message,
-
                     cliente = estrategiaResponse.Cliente,
-
                     servicio = estrategiaQuery.Servicio,
-
                     estadoDeEnvio = estrategiaQuery.EstadoDeEnvio,
-
                     derivaAsesor = derivaAsesor,
-
                     error = false,
-
                     influencer = Influencer
                 };
 
@@ -88,9 +73,8 @@ namespace ProyectoGenerico.BusinessRules
             } catch (Exception ex){
 
                 if (!this.Tracking.Cabecera.NroSeguimiento.IsNullOrEmpty())
-                { 
                     LogHelper.GetInstance().PrintError("BotMessageBusinessRules: " + this.Tracking.Cabecera.NroSeguimiento + ex.Message); 
-                }
+                
                 if (!this.Tracking.Detalle[0].Descripcion.IsNullOrEmpty() ) 
                     return Response(false, false, this.Tracking.Detalle[0].Descripcion);
 
@@ -101,7 +85,6 @@ namespace ProyectoGenerico.BusinessRules
         private void ValidarRespuesta(EstrategiaB2CResponse estrategiaResponse)
         {
             if (estrategiaResponse == null) throw new Exception("La consulta no devolvió resultados.");
-            
             if (estrategiaResponse.Fecha == null) { throw new Exception("La consulta no devolvió el campo Fecha de Ultima Actualización."); }
         }
 
@@ -110,11 +93,11 @@ namespace ProyectoGenerico.BusinessRules
             LogHelper.GetInstance().PrintDebug($"Seguimiento: {this.Seguimiento}, Solicitante: {estrategiaQuery.Solicitante}, AP: {estrategiaQuery.Ap}, Servicio: {estrategiaQuery.Servicio}, EstadoDeEnvio: {estrategiaQuery.EstadoDeEnvio}, MotivoPOD: {estrategiaQuery.MotivoPOD}, CentroStock: {estrategiaQuery.CentroStock}, Destino: {estrategiaQuery.Destino}, Visitas: {estrategiaQuery.Visitas}");
         }
 
-        private string ReplaceMessageDynamicValues(bool derivaAsesor, string clienteCustomer, string message)
+        private string ReplaceMessageDynamicValues(bool derivaAsesor, string nombreCliente, string message)
         {
             string messageResponse = message;
             if(!derivaAsesor)
-                messageResponse = message.Replace("[REMITENTE]", clienteCustomer);
+                messageResponse = message.Replace("[REMITENTE]", nombreCliente);
             return messageResponse;
         }
 
@@ -128,11 +111,8 @@ namespace ProyectoGenerico.BusinessRules
         private bool ExisteDemora(string horasDeDemora)
         {
             if (horasDeDemora == "N/A") return false;
-
             int horasPermitidas = ParseUltimaFechaDeActualizacion(horasDeDemora);
-            
             int horasReales = int.Parse(this.GetUltimaFechaDeActualizacion());
-
             if(horasReales > horasPermitidas) return true;
 
             return false;
@@ -141,13 +121,9 @@ namespace ProyectoGenerico.BusinessRules
         private int ParseUltimaFechaDeActualizacion(string horasDeDemora)
         {
             string fechaTrimed = horasDeDemora.Replace(" ", "");
-            
             string decena = fechaTrimed[1].ToString();
-            
             string unidad = fechaTrimed[2].ToString();
-            
             string horasString = string.Concat(decena, unidad);
-
             int horas = int.Parse(horasString);
 
             return horas;
@@ -158,9 +134,7 @@ namespace ProyectoGenerico.BusinessRules
             BotMessageResponse botMessageResponse = new BotMessageResponse
             {
                 derivaAsesor = derivaAsesor,
-
                 error = error,
-
                 message = message
             };
 
@@ -173,13 +147,9 @@ namespace ProyectoGenerico.BusinessRules
         private string GetServicio()
         {
             string nroSeguimientoTrimed = Tracking.Cabecera.NroSeguimiento.Replace(" ", "");
-            
             char char1 = nroSeguimientoTrimed[0];
-            
             char char2 = nroSeguimientoTrimed[1];
-            
             char char3 = nroSeguimientoTrimed[2];
-
             string eco = string.Concat(char1, char2, char3);
 
             if (eco.ToUpper() == "PST") 
@@ -199,7 +169,6 @@ namespace ProyectoGenerico.BusinessRules
         private string GetVisitas()
         {
             int visitas = 0;
-
             foreach (var detalle in Tracking.Detalle)
             {
                 if (detalle.Estado == "POD" || detalle.Estado == "10") visitas++;
@@ -237,11 +206,8 @@ namespace ProyectoGenerico.BusinessRules
         private string GetUltimaFechaDeActualizacion()
         {
             DateTime fechaDelTracking = GetUltimaFechaDelDetalle();
-            
             DateTime fechaActual = DateTime.Now;
-
             TimeSpan diferenciaDeFechas = fechaActual - fechaDelTracking;
-            
             int diferenciaEnDias = (int)diferenciaDeFechas.TotalHours;
 
             return diferenciaEnDias.ToString();

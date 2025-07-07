@@ -23,6 +23,7 @@ namespace ProyectoGenerico.Entities
     public class EstrategiaB2CResponse
     {
         public int Id { get; set; }
+        public string NombreCliente { get; set; }
         public string Cliente { get; set; }
         public string Ap { get; set; }
         public string Estado { get; set; }
