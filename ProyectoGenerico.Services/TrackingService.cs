@@ -24,7 +24,7 @@ namespace ProyectoGenerico.Services
 
 
 
-        public static Tracking GetTracking(string NroSeguimiento, string Tipo)
+        public static Tracking GetTracking(string NroSeguimiento, string Trackingtype)
         {
             Tracking tracking = new Tracking();
 
@@ -42,7 +42,7 @@ namespace ProyectoGenerico.Services
                 try
                 {
                     client.DefaultRequestHeaders.Clear();
-                    string jsonBody = $"{{'token':'98099c50f91f30d06c38a42cf37cbec94c8b7e965a0b6a5ed1ab67820ee7ca42' , 'tracking':'{NroSeguimiento}', 'tipo':'{Tipo}'}}";
+                    string jsonBody = $"{{'token':'98099c50f91f30d06c38a42cf37cbec94c8b7e965a0b6a5ed1ab67820ee7ca42' , 'tracking':'{NroSeguimiento}', 'Trackingtype':'{Trackingtype}'}}";
                     var httpContent = new StringContent(jsonBody, null, "application/json");
                     var response = client.PostAsync(url, httpContent).Result;
                     var res = response.Content.ReadAsStringAsync().Result;

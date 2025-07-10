@@ -16,7 +16,7 @@ namespace ProyectoGenerico.API.Controllers
             {
                 LogHelper.GetInstance().PrintDebug("Api inicio: ");
 
-                BotMessageBusinessRules botMessageBusinessRules = new BotMessageBusinessRules(seguimiento);
+                BotMessageBusinessRules botMessageBusinessRules = new BotMessageBusinessRules(seguimiento, tipo);
 
                 botMessageResponse = botMessageBusinessRules.GetMessage();
 

@@ -14,8 +14,6 @@ namespace ProyectoGenerico.API.Controllers
         {
             try
             {
-                if(Request.Headers.Authorization.IsNull())
-                    return new PostalDNIResponse(false, true, message:());
                 LogHelper.GetInstance().PrintDebug("Api inicio: ");
 
                 TrackingPostalDNIBusinessRules trackingPostalDNIBusinessRules = new TrackingPostalDNIBusinessRules();

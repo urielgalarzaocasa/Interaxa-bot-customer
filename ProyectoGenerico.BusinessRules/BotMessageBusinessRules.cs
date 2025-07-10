@@ -7,6 +7,11 @@ using ProyectoGenerico.Helper;
 using ProyectoGenerico.Services;
 
 using System;
+using System.Diagnostics;
+using System.Dynamic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Threading;
 
 
 namespace ProyectoGenerico.BusinessRules
@@ -15,12 +20,12 @@ namespace ProyectoGenerico.BusinessRules
     {
         private Tracking Tracking { get; set; }
         private string Seguimiento { get; set; }
-        private string Tipo {  get; set; }
-        public BotMessageBusinessRules(string seguimiento,string tipo) 
+        private string Trackingtype {  get; set; }
+        public BotMessageBusinessRules(string seguimiento,string trackingtype) 
         {
-            this.Tracking = TrackingService.GetTracking(seguimiento, tipo);
+            this.Tracking = TrackingService.GetTracking(seguimiento, trackingtype);
             this.Seguimiento = seguimiento;
-            this.Tipo = tipo;
+            this.Trackingtype = trackingtype;
         }
 
         public BotMessageResponse GetMessage()
@@ -95,9 +100,18 @@ namespace ProyectoGenerico.BusinessRules
 
         private string ReplaceMessageDynamicValues(bool derivaAsesor, string nombreCliente, string message)
         {
+            if (derivaAsesor)
+                return message;
+
             string messageResponse = message;
-            if(!derivaAsesor)
-                messageResponse = message.Replace("[REMITENTE]", nombreCliente);
+            messageResponse = message.Replace("[REMITENTE]", nombreCliente);
+            messageResponse = messageResponse.Replace("(Fecha del Z4)", this.GetUltimaFechaDelDetalle().ToString("dd/MM/yyyy HH:mm:ss"));
+            messageResponse = messageResponse.Replace("(Nombre del receptor)", this.GetReceptor());
+            messageResponse = messageResponse.Replace("(Entrecalles - Fachada - Observacion particular de la vivienda - Nombre del Barrio Cerrado)", GetDomicilioDestino());
+            messageResponse = messageResponse.Replace("[nombre de destinatario]", GetDestinatario());
+            messageResponse = messageResponse.Replace("[Domicilio]", GetDomicilioDestino());
+            messageResponse = messageResponse.Replace("[FECHA EVENTO BOVEDA]", this.GetUltimaFechaDelDetalle().ToString("dd/MM/yyyy HH:mm:ss"));
+
             return messageResponse;
         }
 
@@ -111,6 +125,8 @@ namespace ProyectoGenerico.BusinessRules
         private bool ExisteDemora(string horasDeDemora)
         {
             if (horasDeDemora == "N/A") return false;
+            if (horasDeDemora == "+N/A") return false;
+            if (horasDeDemora == "-N/A") return false;
             int horasPermitidas = ParseUltimaFechaDeActualizacion(horasDeDemora);
             int horasReales = int.Parse(this.GetUltimaFechaDeActualizacion());
             if(horasReales > horasPermitidas) return true;
@@ -139,6 +155,18 @@ namespace ProyectoGenerico.BusinessRules
             };
 
             return botMessageResponse;
+        }
+        private string GetDestinatario()
+        {
+            return this.Tracking.Cabecera.Destinatario;
+        }
+        private string GetDomicilioDestino()
+        {
+            return this.Tracking.Cabecera.Domicilio_Destino;
+        }
+        private string GetReceptor()
+        {
+            return this.Tracking.Cabecera.Receptor;
         }
 
         /*
