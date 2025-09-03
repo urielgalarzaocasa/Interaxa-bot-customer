@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AcuerdoProducto.cs" />
+    <Compile Include="TrackCentro.cs" />
     <Compile Include="TrackingMeli.cs" />
     <Compile Include="TrackingMeliResponse.cs" />
     <Compile Include="PostalDNIResponse.cs" />

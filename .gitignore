@@ -408,3 +408,4 @@ FodyWeavers.xsd
  # Ignorar archivos de usuario de Visual Studio
  *.user
  *.suo
+/ProyectoGenerico.API/Web.config

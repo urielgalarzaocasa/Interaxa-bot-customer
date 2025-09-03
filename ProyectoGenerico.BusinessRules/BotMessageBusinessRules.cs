@@ -1,18 +1,9 @@
-﻿using ProyectoGenerico.Data;
-
-using ProyectoGenerico.Entities;
-
+﻿using System;
+using ProyectoGenerico.Data;
 using ProyectoGenerico.Helper;
-
+using ProyectoGenerico.Entities;
 using ProyectoGenerico.Services;
-
-using System;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Threading;
-
+using Microsoft.SqlServer.Server;
 
 namespace ProyectoGenerico.BusinessRules
 {
@@ -48,7 +39,8 @@ namespace ProyectoGenerico.BusinessRules
                     CentroStock = this.GetCentroStock(),
                     Destino = this.GetDestino(),
                     Visitas = this.GetVisitas(),
-                    Ap = this.GetAP()
+                    Ap = this.GetAP(),
+                    Centro = this.GetCentro()
                 };
 
                 DebugLog(estrategiaQuery);
@@ -60,7 +52,11 @@ namespace ProyectoGenerico.BusinessRules
 
                 string message = estrategiaResponse.Texto;
                 bool derivaAsesor = ExisteDemora(estrategiaResponse.HoraHabilesFin);
-                message = ReplaceMessageDynamicValues(derivaAsesor, estrategiaResponse.NombreCliente, message);
+                
+                TrackCentro trackCentro = estrategiaB2CData.GetTrackCentro(estrategiaQuery);
+
+                if(!derivaAsesor)
+                    message = ReplaceMessageDynamicValues(estrategiaResponse.NombreCliente, message, trackCentro);
 
                 BotMessageResponse botMessageResponse = new BotMessageResponse
                 {
@@ -98,21 +94,23 @@ namespace ProyectoGenerico.BusinessRules
             LogHelper.GetInstance().PrintDebug($"Seguimiento: {this.Seguimiento}, Solicitante: {estrategiaQuery.Solicitante}, AP: {estrategiaQuery.Ap}, Servicio: {estrategiaQuery.Servicio}, EstadoDeEnvio: {estrategiaQuery.EstadoDeEnvio}, MotivoPOD: {estrategiaQuery.MotivoPOD}, CentroStock: {estrategiaQuery.CentroStock}, Destino: {estrategiaQuery.Destino}, Visitas: {estrategiaQuery.Visitas}");
         }
 
-        private string ReplaceMessageDynamicValues(bool derivaAsesor, string nombreCliente, string message)
+        private string ReplaceMessageDynamicValues(string nombreCliente, string message, TrackCentro trackCentro)
         {
-            if (derivaAsesor)
-                return message;
-
             string messageResponse = message;
             messageResponse = message.Replace("[REMITENTE]", nombreCliente);
             messageResponse = messageResponse.Replace("(Fecha del Z4)", this.GetUltimaFechaDelDetalle().ToString("dd/MM/yyyy HH:mm:ss"));
             messageResponse = messageResponse.Replace("(Nombre del receptor)", this.GetReceptor());
-            messageResponse = messageResponse.Replace("(Entrecalles - Fachada - Observacion particular de la vivienda - Nombre del Barrio Cerrado)", GetDomicilioDestino());
+            //messageResponse = messageResponse.Replace("(Entrecalles - Fachada - Observacion particular de la vivienda - Nombre del Barrio Cerrado)", GetDomicilioDestino());
             messageResponse = messageResponse.Replace("[nombre de destinatario]", GetDestinatario());
             messageResponse = messageResponse.Replace("[Domicilio]", GetDomicilioDestino());
             messageResponse = messageResponse.Replace("[FECHA EVENTO BOVEDA]", this.GetUltimaFechaDelDetalle().ToString("dd/MM/yyyy HH:mm:ss"));
-
+            messageResponse = messageResponse.Replace("[CIUDAD, DOMICILIO, HORARIO]", this.GetDomicilioHorarioSucursal(trackCentro));
             return messageResponse;
+        }
+
+        private string GetDomicilioHorarioSucursal(TrackCentro trackCentro)
+        { 
+            return string.Concat(trackCentro.Direccion, " - ", trackCentro.Horario);
         }
 
         private DateTime ParseFecha(string myDate)
@@ -256,6 +254,11 @@ namespace ProyectoGenerico.BusinessRules
         private string GetAP()
         {
             return Tracking.Cabecera.Ap;
+        }
+
+        private string GetCentro()
+        {
+            return "";
         }
     }
 }

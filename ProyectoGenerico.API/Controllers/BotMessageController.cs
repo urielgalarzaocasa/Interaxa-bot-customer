@@ -1,15 +1,14 @@
-﻿using ProyectoGenerico.BusinessRules;
-using ProyectoGenerico.Entities;
-using ProyectoGenerico.Entities.ViewModel;
-using System;
+﻿using System;
 using System.Web.Http;
 using ProyectoGenerico.Helper;
+using ProyectoGenerico.Entities;
+using ProyectoGenerico.BusinessRules;
 
 namespace ProyectoGenerico.API.Controllers
 {
     public class BotMessageController : ApiController
     {
-        public BotMessageResponse Get(string seguimiento, string tipo)
+        public BotMessageResponse Get(string seguimiento, string tipo = "")
         {
             BotMessageResponse botMessageResponse = new BotMessageResponse();
             try

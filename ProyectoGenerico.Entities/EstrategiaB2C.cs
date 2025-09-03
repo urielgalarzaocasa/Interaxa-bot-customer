@@ -18,6 +18,7 @@ namespace ProyectoGenerico.Entities
         public string RespuestaSinDemora { get; set; }
         public string RespuestaConDemora { get; set; }
         public string TextosUXHC { get; set; }
+        public string Centro { get; set; }
 
     }
     public class EstrategiaB2CResponse
@@ -36,4 +37,5 @@ namespace ProyectoGenerico.Entities
         public string Visita { get; set; }
         public string Texto { get; set; }
     }
+
 }

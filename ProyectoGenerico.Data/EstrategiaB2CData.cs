@@ -1,11 +1,11 @@
 ﻿using ProyectoGenerico.Data.Context;
 using ProyectoGenerico.Data.Interface;
 using ProyectoGenerico.Entities;
-using ProyectoGenerico.Helper;
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
+using System.Data.SqlClient;
+using ProyectoGenerico.Helper;
+using System.Collections.Generic;
 
 
 namespace ProyectoGenerico.Data
@@ -15,6 +15,26 @@ namespace ProyectoGenerico.Data
         private readonly IProyectoGenericoContext context = new ProyectoGenericoContext();
         public EstrategiaB2CData()
         {
+        }
+        public TrackCentro GetTrackCentro(EstrategiaB2C estrategia)
+        {
+            LogHelper.GetInstance().PrintDebug("EstrategiaB2C Get() inicio");
+            try
+            {
+                List<SqlParameter> listParameters = new List<SqlParameter>();
+
+                listParameters.Add(new SqlParameter("@solicitante", estrategia.Solicitante));
+                
+
+                var response = context.ExecuteStoredProcedure<TrackCentro>("BotTrackingSeleccionarTrackCentro", listParameters.ToArray()).FirstOrDefault();
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.GetInstance().PrintError("No se pudo obtener la estrategia: " + ex.Message);
+                throw ex;
+            }
         }
         public EstrategiaB2CResponse Get(EstrategiaB2C estrategia)
         {
