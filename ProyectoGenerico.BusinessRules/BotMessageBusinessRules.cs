@@ -53,7 +53,7 @@ namespace ProyectoGenerico.BusinessRules
                 string message = estrategiaResponse.Texto;
                 bool derivaAsesor = ExisteDemora(estrategiaResponse.HoraHabilesFin);
                 
-                TrackCentro trackCentro = estrategiaB2CData.GetTrackCentro(estrategiaQuery);
+                TrackCentro trackCentro = estrategiaB2CData.GetTrackCentro(Tracking.Cabecera.CentroStock);
 
                 if(!derivaAsesor)
                     message = ReplaceMessageDynamicValues(estrategiaResponse.NombreCliente, message, trackCentro);

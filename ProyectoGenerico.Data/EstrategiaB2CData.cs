@@ -16,23 +16,23 @@ namespace ProyectoGenerico.Data
         public EstrategiaB2CData()
         {
         }
-        public TrackCentro GetTrackCentro(EstrategiaB2C estrategia)
+        public TrackCentro GetTrackCentro(string centroStock)
         {
-            LogHelper.GetInstance().PrintDebug("EstrategiaB2C Get() inicio");
+            string procedimientoAlmacenado = "BotTrackingSeleccionarTrackCentro";
+            LogHelper.GetInstance().PrintDebug($"EstrategiaB2CData GetTrackCentro() inicio | procedimientoAlmacenado: {procedimientoAlmacenado} {centroStock}");
             try
             {
                 List<SqlParameter> listParameters = new List<SqlParameter>();
 
-                listParameters.Add(new SqlParameter("@solicitante", estrategia.Solicitante));
+                listParameters.Add(new SqlParameter("@IDCentro", centroStock));
                 
-
-                var response = context.ExecuteStoredProcedure<TrackCentro>("BotTrackingSeleccionarTrackCentro", listParameters.ToArray()).FirstOrDefault();
+                var response = context.ExecuteStoredProcedure<TrackCentro>(procedimientoAlmacenado, listParameters.ToArray()).FirstOrDefault();
 
                 return response;
             }
             catch (Exception ex)
             {
-                LogHelper.GetInstance().PrintError("No se pudo obtener la estrategia: " + ex.Message);
+                LogHelper.GetInstance().PrintError("No se pudo obtener el centroStock: " + ex.Message);
                 throw ex;
             }
         }
