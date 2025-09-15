@@ -2,7 +2,7 @@ using System;
 
 namespace ProyectoGenerico.Entities
 {
-    public class EstrategiaB2C
+    public class Estrategia
     {
         private int Id { get; set; }
         public string Cliente { get; set; }
@@ -19,9 +19,9 @@ namespace ProyectoGenerico.Entities
         public string RespuestaConDemora { get; set; }
         public string TextosUXHC { get; set; }
         public string Centro { get; set; }
-
+        public string TipoCliente { get; set; }
     }
-    public class EstrategiaB2CResponse
+    public class EstrategiaResponse
     {
         public int Id { get; set; }
         public string NombreCliente { get; set; }
@@ -37,5 +37,9 @@ namespace ProyectoGenerico.Entities
         public string Visita { get; set; }
         public string Texto { get; set; }
     }
-
+    public static class EstrategiaTrackingClientType
+    {
+        public const string B2B = "B2B";
+        public const string B2C = "B2C";
+    }
 }

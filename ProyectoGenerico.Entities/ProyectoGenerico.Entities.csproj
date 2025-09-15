@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AcuerdoProducto.cs" />
+    <Compile Include="BotMessageResquest.cs" />
     <Compile Include="TrackCentro.cs" />
     <Compile Include="TrackingMeli.cs" />
     <Compile Include="TrackingMeliResponse.cs" />
@@ -53,7 +54,7 @@
     <Compile Include="Detalle.cs" />
     <Compile Include="PostalDNI.cs" />
     <Compile Include="DetallePostal.cs" />
-    <Compile Include="EstrategiaB2C.cs" />
+    <Compile Include="Estrategia.cs" />
     <Compile Include="LineaTiempo.cs" />
     <Compile Include="LineaTiempoPostal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

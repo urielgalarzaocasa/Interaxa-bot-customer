@@ -1,19 +1,11 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Globalization;
-using System.IO;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Authentication;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Microsoft.SqlServer.Server;
-using ProyectoGenerico.Entities;
+using System.Globalization;
 using ProyectoGenerico.Helper;
-//using static System.Net.WebRequestMethods;
+using ProyectoGenerico.Entities;
+using System.Security.Authentication;
+using System.Text.Json.Serialization;
 
 namespace ProyectoGenerico.Services
 {

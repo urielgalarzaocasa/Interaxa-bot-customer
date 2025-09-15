@@ -60,7 +60,7 @@
     <Compile Include="TrackingMeliData.cs" />
     <Compile Include="PostalDNIData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EstrategiaB2CData.cs" />
+    <Compile Include="EstrategiaData.cs" />
     <Compile Include="CanalizadorData.cs" />
     <Compile Include="PostalData.cs" />
     <Compile Include="TestData.cs" />

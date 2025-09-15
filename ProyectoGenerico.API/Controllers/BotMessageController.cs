@@ -26,11 +26,43 @@ namespace ProyectoGenerico.API.Controllers
                 //excepciones sin controlar, enviar por email!
 
                 LogHelper.GetInstance().PrintError("Api error: " + ex.Message);
-                
+
                 botMessageResponse.derivaAsesor = true;
                 botMessageResponse.error = true;
                 botMessageResponse.message = "Derivar al asesor";
-                
+
+                return botMessageResponse;
+            }
+            finally
+            {
+                LogHelper.GetInstance().PrintDebug("Api fin");
+            }
+        }
+
+        [ApiKeyAuth]
+        public BotMessageResponse Post([FromBody] BotMessageRequest request)
+        {
+            BotMessageResponse botMessageResponse = new BotMessageResponse();
+            try
+            {
+                LogHelper.GetInstance().PrintDebug("Api inicio: ");
+
+                BotMessageBusinessRules botMessageBusinessRules = new BotMessageBusinessRules(request.Seguimiento, request.Tipo, request.TipoCliente);
+
+                botMessageResponse = botMessageBusinessRules.GetMessage();
+
+                return botMessageResponse;
+            }
+            catch (Exception ex)
+            {
+                //excepciones sin controlar, enviar por email!
+
+                LogHelper.GetInstance().PrintError("Api error: " + ex.Message);
+
+                botMessageResponse.derivaAsesor = true;
+                botMessageResponse.error = true;
+                botMessageResponse.message = "Derivar al asesor";
+
                 return botMessageResponse;
             }
             finally

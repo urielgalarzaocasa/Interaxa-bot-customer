@@ -4,6 +4,7 @@ using ProyectoGenerico.Helper;
 using ProyectoGenerico.Entities;
 using ProyectoGenerico.Services;
 using Microsoft.SqlServer.Server;
+using System.Collections.Generic;
 
 namespace ProyectoGenerico.BusinessRules
 {
@@ -11,26 +12,38 @@ namespace ProyectoGenerico.BusinessRules
     {
         private Tracking Tracking { get; set; }
         private string Seguimiento { get; set; }
-        private string Trackingtype {  get; set; }
-        public BotMessageBusinessRules(string seguimiento,string trackingtype) 
+        private string Trackingtype { get; set; }
+        private string TrackingClientType { get; set; }
+        
+
+        public BotMessageBusinessRules(string seguimiento, string trackingtype)
         {
             this.Tracking = TrackingService.GetTracking(seguimiento, trackingtype);
             this.Seguimiento = seguimiento;
             this.Trackingtype = trackingtype;
+            this.TrackingClientType = EstrategiaTrackingClientType.B2C;
+        }
+
+        public BotMessageBusinessRules(string seguimiento, string trackingtype, string trackingclienttype)
+        {
+            this.Tracking = TrackingService.GetTracking(seguimiento, trackingtype);
+            this.Seguimiento = seguimiento;
+            this.Trackingtype = trackingtype;
+            this.TrackingClientType = trackingclienttype;
         }
 
         public BotMessageResponse GetMessage()
         {
-            if (Tracking.Cabecera == null) 
+            if (Tracking.Cabecera == null)
                 return Response(true, true, "Derivar a un asesor");
-            
+
             try
             {
                 LogHelper.GetInstance().PrintDebug("-- BotMessageBusinessRules inicio --");
 
                 bool Influencer = Tracking.Cabecera.Influencer;
 
-                EstrategiaB2C estrategiaQuery = new EstrategiaB2C
+                Estrategia estrategiaQuery = new Estrategia
                 {
                     Solicitante = this.GetSolicitante(),
                     Servicio = this.GetServicio(),
@@ -40,22 +53,23 @@ namespace ProyectoGenerico.BusinessRules
                     Destino = this.GetDestino(),
                     Visitas = this.GetVisitas(),
                     Ap = this.GetAP(),
-                    Centro = this.GetCentro()
+                    Centro = this.GetCentro(),
+                    TipoCliente = this.TrackingClientType
                 };
 
                 DebugLog(estrategiaQuery);
 
-                EstrategiaB2CData estrategiaB2CData = new EstrategiaB2CData();
-                EstrategiaB2CResponse estrategiaResponse = estrategiaB2CData.Get(estrategiaQuery);
+                EstrategiaData estrategiaData = new EstrategiaData();
+                EstrategiaResponse estrategiaResponse = estrategiaData.Get(estrategiaQuery);
 
                 ValidarRespuesta(estrategiaResponse);
 
                 string message = estrategiaResponse.Texto;
                 bool derivaAsesor = ExisteDemora(estrategiaResponse.HoraHabilesFin);
-                
-                TrackCentro trackCentro = estrategiaB2CData.GetTrackCentro(Tracking.Cabecera.CentroStock);
 
-                if(!derivaAsesor)
+                TrackCentro trackCentro = estrategiaData.GetTrackCentro(Tracking.Cabecera.CentroStock);
+
+                if (!derivaAsesor)
                     message = ReplaceMessageDynamicValues(estrategiaResponse.NombreCliente, message, trackCentro);
 
                 BotMessageResponse botMessageResponse = new BotMessageResponse
@@ -71,27 +85,29 @@ namespace ProyectoGenerico.BusinessRules
 
                 return botMessageResponse;
 
-            } catch (Exception ex){
+            }
+            catch (Exception ex)
+            {
 
                 if (!this.Tracking.Cabecera.NroSeguimiento.IsNullOrEmpty())
-                    LogHelper.GetInstance().PrintError("BotMessageBusinessRules: " + this.Tracking.Cabecera.NroSeguimiento + ex.Message); 
-                
-                if (!this.Tracking.Detalle[0].Descripcion.IsNullOrEmpty() ) 
+                    LogHelper.GetInstance().PrintError("BotMessageBusinessRules: " + this.Tracking.Cabecera.NroSeguimiento + ex.Message);
+
+                if (!this.Tracking.Detalle[0].Descripcion.IsNullOrEmpty())
                     return Response(false, false, this.Tracking.Detalle[0].Descripcion);
 
                 return Response(true, true, "Derivar a un asesor");
             }
         }
 
-        private void ValidarRespuesta(EstrategiaB2CResponse estrategiaResponse)
+        private void ValidarRespuesta(EstrategiaResponse estrategiaResponse)
         {
             if (estrategiaResponse == null) throw new Exception("La consulta no devolvió resultados.");
             if (estrategiaResponse.Fecha == null) { throw new Exception("La consulta no devolvió el campo Fecha de Ultima Actualización."); }
         }
 
-        private void DebugLog(EstrategiaB2C estrategiaQuery)
+        private void DebugLog(Estrategia estrategiaQuery)
         {
-            LogHelper.GetInstance().PrintDebug($"Seguimiento: {this.Seguimiento}, Solicitante: {estrategiaQuery.Solicitante}, AP: {estrategiaQuery.Ap}, Servicio: {estrategiaQuery.Servicio}, EstadoDeEnvio: {estrategiaQuery.EstadoDeEnvio}, MotivoPOD: {estrategiaQuery.MotivoPOD}, CentroStock: {estrategiaQuery.CentroStock}, Destino: {estrategiaQuery.Destino}, Visitas: {estrategiaQuery.Visitas}");
+            LogHelper.GetInstance().PrintDebug($"Seguimiento: {this.Seguimiento}, TipoCliente: {this.TrackingClientType}, Solicitante: {estrategiaQuery.Solicitante}, AP: {estrategiaQuery.Ap}, Servicio: {estrategiaQuery.Servicio}, EstadoDeEnvio: {estrategiaQuery.EstadoDeEnvio}, MotivoPOD: {estrategiaQuery.MotivoPOD}, CentroStock: {estrategiaQuery.CentroStock}, Destino: {estrategiaQuery.Destino}, Visitas: {estrategiaQuery.Visitas}");
         }
 
         private string ReplaceMessageDynamicValues(string nombreCliente, string message, TrackCentro trackCentro)
@@ -109,7 +125,7 @@ namespace ProyectoGenerico.BusinessRules
         }
 
         private string GetDomicilioHorarioSucursal(TrackCentro trackCentro)
-        { 
+        {
             return string.Concat(trackCentro.Direccion, " - ", trackCentro.Horario);
         }
 
@@ -127,7 +143,7 @@ namespace ProyectoGenerico.BusinessRules
             if (horasDeDemora == "-N/A") return false;
             int horasPermitidas = ParseUltimaFechaDeActualizacion(horasDeDemora);
             int horasReales = int.Parse(this.GetUltimaFechaDeActualizacion());
-            if(horasReales > horasPermitidas) return true;
+            if (horasReales > horasPermitidas) return true;
 
             return false;
         }
@@ -142,7 +158,7 @@ namespace ProyectoGenerico.BusinessRules
 
             return horas;
         }
-       
+
         private BotMessageResponse Response(bool derivaAsesor, bool error, string message)
         {
             BotMessageResponse botMessageResponse = new BotMessageResponse
@@ -178,10 +194,10 @@ namespace ProyectoGenerico.BusinessRules
             char char3 = nroSeguimientoTrimed[2];
             string eco = string.Concat(char1, char2, char3);
 
-            if (eco.ToUpper() == "PST") 
+            if (eco.ToUpper() == "PST")
                 return "";
 
-            if (!int.TryParse(eco, out int result)) 
+            if (!int.TryParse(eco, out int result))
                 return "PAQUETERIA";
 
             return "ECOMMERCE";
@@ -202,22 +218,22 @@ namespace ProyectoGenerico.BusinessRules
             return visitas.ToString();
         }
 
-        private string GetDestino() 
+        private string GetDestino()
         {
             return "";
         }
 
-        private string GetCentroStock() 
+        private string GetCentroStock()
         {
             //Si el texto contiene el string o parte del string: "El pedido llegó al centro de distribución OCASA [sucursal], responsable de la entrega a destino" y un estado HFD es ULTIMAMILLA
             //De lo contrario es PREULTIMAMILLA
             //EL ENVÍO HA LLEGADO AL CENTRO DE DISTRIBUCIÓN OCASA [SUCURSAL]. PREULTIMAMILLA
 
             string ultimamilla = "El pedido llegó al centro de distribución OCASA";
-            
+
             foreach (var detalle in Tracking.Detalle)
             {
-                if (detalle.Estado == "HFD" && detalle.Descripcion.ToLower().Trim().Contains(ultimamilla.ToLower().Trim())) 
+                if (detalle.Estado == "HFD" && detalle.Descripcion.ToLower().Trim().Contains(ultimamilla.ToLower().Trim()))
                     return "ULTIMA MILLA";
             }
 
@@ -246,7 +262,7 @@ namespace ProyectoGenerico.BusinessRules
 
         private string GetEstadoDeEnvio()
         {
-            return this.Tracking.Cabecera.Estado; 
+            return this.Tracking.Cabecera.Estado;
             //if(!this.estados.ContainsKey(estadoId)) { throw new Exception("No existe el estado: " + estadoId); }
             //return this.estados[estadoId].ToUpper();
         }
