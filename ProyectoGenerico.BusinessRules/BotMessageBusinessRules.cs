@@ -3,8 +3,6 @@ using ProyectoGenerico.Data;
 using ProyectoGenerico.Helper;
 using ProyectoGenerico.Entities;
 using ProyectoGenerico.Services;
-using Microsoft.SqlServer.Server;
-using System.Collections.Generic;
 
 namespace ProyectoGenerico.BusinessRules
 {
@@ -35,7 +33,7 @@ namespace ProyectoGenerico.BusinessRules
         public BotMessageResponse GetMessage()
         {
             if (Tracking.Cabecera == null)
-                return Response(true, true, "Derivar a un asesor");
+                return new BotMessageResponse().ErrorResponse();
 
             try
             {
@@ -88,14 +86,15 @@ namespace ProyectoGenerico.BusinessRules
             }
             catch (Exception ex)
             {
+                BotMessageResponse botMessageResponse = new BotMessageResponse();
 
                 if (!this.Tracking.Cabecera.NroSeguimiento.IsNullOrEmpty())
                     LogHelper.GetInstance().PrintError("BotMessageBusinessRules: " + this.Tracking.Cabecera.NroSeguimiento + ex.Message);
 
                 if (!this.Tracking.Detalle[0].Descripcion.IsNullOrEmpty())
-                    return Response(false, false, this.Tracking.Detalle[0].Descripcion);
+                    return botMessageResponse.CustomErrorResponse(true, false, this.Tracking.Detalle[0].Descripcion);
 
-                return Response(true, true, "Derivar a un asesor");
+                return botMessageResponse.ErrorResponse();
             }
         }
 
@@ -129,13 +128,6 @@ namespace ProyectoGenerico.BusinessRules
             return string.Concat(trackCentro.Direccion, " - ", trackCentro.Horario);
         }
 
-        private DateTime ParseFecha(string myDate)
-        {
-            DateTime fechaParseada = DateTime.ParseExact(myDate, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
-
-            return fechaParseada;
-        }
-
         private bool ExisteDemora(string horasDeDemora)
         {
             if (horasDeDemora == "N/A") return false;
@@ -159,25 +151,16 @@ namespace ProyectoGenerico.BusinessRules
             return horas;
         }
 
-        private BotMessageResponse Response(bool derivaAsesor, bool error, string message)
-        {
-            BotMessageResponse botMessageResponse = new BotMessageResponse
-            {
-                derivaAsesor = derivaAsesor,
-                error = error,
-                message = message
-            };
-
-            return botMessageResponse;
-        }
         private string GetDestinatario()
         {
             return this.Tracking.Cabecera.Destinatario;
         }
+
         private string GetDomicilioDestino()
         {
             return this.Tracking.Cabecera.Domicilio_Destino;
         }
+
         private string GetReceptor()
         {
             return this.Tracking.Cabecera.Receptor;

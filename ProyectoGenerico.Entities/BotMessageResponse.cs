@@ -11,5 +11,29 @@ namespace ProyectoGenerico.Entities
         public string servicio { get; set; }
         public string estadoDeEnvio { get; set; }
         public bool influencer { get; set; }
+
+        public BotMessageResponse ErrorResponse()
+        {
+            BotMessageResponse botMessageResponse = new BotMessageResponse
+            {
+                derivaAsesor = false, //true, -> original
+                error = true,
+                message = "Derivar al asesor."
+            };
+
+            return botMessageResponse;
+        }
+
+        public BotMessageResponse CustomErrorResponse(bool derivaAsesor, bool error, string message)
+        {
+            BotMessageResponse botMessageResponse = new BotMessageResponse
+            {
+                derivaAsesor = false, //derivaAsesor, -> original
+                error = error,
+                message = message
+            };
+
+            return botMessageResponse;
+        }
     }
 }

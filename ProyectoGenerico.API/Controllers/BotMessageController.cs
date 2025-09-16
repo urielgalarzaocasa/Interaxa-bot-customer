@@ -10,28 +10,15 @@ namespace ProyectoGenerico.API.Controllers
     {
         public BotMessageResponse Get(string seguimiento, string tipo = "")
         {
-            BotMessageResponse botMessageResponse = new BotMessageResponse();
             try
             {
                 LogHelper.GetInstance().PrintDebug("Api inicio: ");
-
-                BotMessageBusinessRules botMessageBusinessRules = new BotMessageBusinessRules(seguimiento, tipo);
-
-                botMessageResponse = botMessageBusinessRules.GetMessage();
-
-                return botMessageResponse;
+                return new BotMessageBusinessRules(seguimiento, tipo).GetMessage();
             }
             catch (Exception ex)
             {
-                //excepciones sin controlar, enviar por email!
-
                 LogHelper.GetInstance().PrintError("Api error: " + ex.Message);
-
-                botMessageResponse.derivaAsesor = true;
-                botMessageResponse.error = true;
-                botMessageResponse.message = "Derivar al asesor";
-
-                return botMessageResponse;
+                return new BotMessageResponse().ErrorResponse();
             }
             finally
             {
@@ -42,28 +29,15 @@ namespace ProyectoGenerico.API.Controllers
         [ApiKeyAuth]
         public BotMessageResponse Post([FromBody] BotMessageRequest request)
         {
-            BotMessageResponse botMessageResponse = new BotMessageResponse();
             try
             {
                 LogHelper.GetInstance().PrintDebug("Api inicio: ");
-
-                BotMessageBusinessRules botMessageBusinessRules = new BotMessageBusinessRules(request.Seguimiento, request.Tipo, request.TipoCliente);
-
-                botMessageResponse = botMessageBusinessRules.GetMessage();
-
-                return botMessageResponse;
+                return new BotMessageBusinessRules(request.Seguimiento, request.Tipo, request.TipoCliente).GetMessage();
             }
             catch (Exception ex)
             {
-                //excepciones sin controlar, enviar por email!
-
                 LogHelper.GetInstance().PrintError("Api error: " + ex.Message);
-
-                botMessageResponse.derivaAsesor = true;
-                botMessageResponse.error = true;
-                botMessageResponse.message = "Derivar al asesor";
-
-                return botMessageResponse;
+                return new BotMessageResponse().ErrorResponse();
             }
             finally
             {
